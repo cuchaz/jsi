@@ -184,7 +184,7 @@ public class RTree implements SpatialIndex, Serializable {
   /**
    * Adds a new entry at a specified level in the tree
    */
-  private void add(float minX, float minY, float maxX, float maxY, int id, int level) {
+  private void add(int minX, int minY, int maxX, int maxY, int id, int level) {
     // I1 [Find position for new record] Invoke ChooseLeaf to select a
     // leaf node L in which to place r
     Node n = chooseNode(minX, minY, maxX, maxY, level);
@@ -292,10 +292,10 @@ public class RTree implements SpatialIndex, Serializable {
     // (this is only needed when the tree is empty, as this is the only state where an empty node
     // is not eliminated)
     if (size == 0) {
-      root.mbrMinX = Float.MAX_VALUE;
-      root.mbrMinY = Float.MAX_VALUE;
-      root.mbrMaxX = -Float.MAX_VALUE;
-      root.mbrMaxY = -Float.MAX_VALUE;
+      root.mbrMinX = Integer.MAX_VALUE;
+      root.mbrMinY = Integer.MAX_VALUE;
+      root.mbrMaxX = -Integer.MAX_VALUE;
+      root.mbrMaxY = -Integer.MAX_VALUE;
     }
 
     if (INTERNAL_CONSISTENCY_CHECKING) {
@@ -585,7 +585,7 @@ public class RTree implements SpatialIndex, Serializable {
    *
    * @return new node object.
    */
-  private Node splitNode(Node n, float newRectMinX, float newRectMinY, float newRectMaxX, float newRectMaxY, int newId) {
+  private Node splitNode(Node n, int newRectMinX, int newRectMinY, int newRectMaxX, int newRectMaxY, int newId) {
     // [Pick first entry for each group] Apply algorithm pickSeeds to
     // choose two entries to be the first elements of the groups. Assign
     // each to a group.
@@ -593,10 +593,10 @@ public class RTree implements SpatialIndex, Serializable {
     // debug code
     float initialArea = 0;
     if (log.isDebugEnabled()) {
-      float unionMinX = Math.min(n.mbrMinX, newRectMinX);
-      float unionMinY = Math.min(n.mbrMinY, newRectMinY);
-      float unionMaxX = Math.max(n.mbrMaxX, newRectMaxX);
-      float unionMaxY = Math.max(n.mbrMaxY, newRectMaxY);
+      int unionMinX = Math.min(n.mbrMinX, newRectMinX);
+      int unionMinY = Math.min(n.mbrMinY, newRectMinY);
+      int unionMaxX = Math.max(n.mbrMaxX, newRectMaxX);
+      int unionMaxY = Math.max(n.mbrMaxY, newRectMaxY);
 
       initialArea = (unionMaxX - unionMinX) * (unionMaxY - unionMinY);
     }
@@ -678,7 +678,7 @@ public class RTree implements SpatialIndex, Serializable {
    * Pick the seeds used to split a node.
    * Select two entries to be the first elements of the groups
    */
-  private void pickSeeds(Node n, float newRectMinX, float newRectMinY, float newRectMaxX, float newRectMaxY, int newId, Node newNode) {
+  private void pickSeeds(Node n, int newRectMinX, int newRectMinY, int newRectMaxX, int newRectMaxY, int newId, Node newNode) {
     // Find extreme rectangles along all dimension. Along each dimension,
     // find the entry whose rectangle has the highest low side, and the one
     // with the lowest high side. Record the separation.
@@ -693,26 +693,26 @@ public class RTree implements SpatialIndex, Serializable {
     if (newRectMaxX > n.mbrMaxX) n.mbrMaxX = newRectMaxX;
     if (newRectMaxY > n.mbrMaxY) n.mbrMaxY = newRectMaxY;
 
-    float mbrLenX = n.mbrMaxX - n.mbrMinX;
-    float mbrLenY = n.mbrMaxY - n.mbrMinY;
+    int mbrLenX = n.mbrMaxX - n.mbrMinX;
+    int mbrLenY = n.mbrMaxY - n.mbrMinY;
 
     if (log.isDebugEnabled()) {
       log.debug("pickSeeds(): NodeId = " + n.nodeId);
     }
 
-    float tempHighestLow = newRectMinX;
+    int tempHighestLow = newRectMinX;
     int tempHighestLowIndex = -1; // -1 indicates the new rectangle is the seed
 
-    float tempLowestHigh = newRectMaxX;
+    int tempLowestHigh = newRectMaxX;
     int tempLowestHighIndex = -1; // -1 indicates the new rectangle is the seed
 
     for (int i = 0; i < n.entryCount; i++) {
-      float tempLow = n.entriesMinX[i];
+      int tempLow = n.entriesMinX[i];
       if (tempLow >= tempHighestLow) {
          tempHighestLow = tempLow;
          tempHighestLowIndex = i;
       } else {  // ensure that the same index cannot be both lowestHigh and highestLow
-        float tempHigh = n.entriesMaxX[i];
+        int tempHigh = n.entriesMaxX[i];
         if (tempHigh <= tempLowestHigh) {
           tempLowestHigh = tempHigh;
           tempLowestHighIndex = i;
@@ -752,12 +752,12 @@ public class RTree implements SpatialIndex, Serializable {
     tempLowestHighIndex = -1; // -1 indicates the new rectangle is the seed
 
     for (int i = 0; i < n.entryCount; i++) {
-      float tempLow = n.entriesMinY[i];
+      int tempLow = n.entriesMinY[i];
       if (tempLow >= tempHighestLow) {
          tempHighestLow = tempLow;
          tempHighestLowIndex = i;
       } else {  // ensure that the same index cannot be both lowestHigh and highestLow
-        float tempHigh = n.entriesMaxY[i];
+        int tempHigh = n.entriesMaxY[i];
         if (tempHigh <= tempLowestHigh) {
           tempLowestHigh = tempHigh;
           tempLowestHighIndex = i;
@@ -795,9 +795,9 @@ public class RTree implements SpatialIndex, Serializable {
     // the lowestHighIndex is the largest X (but always a different rectangle)
     if (highestLowIndex == lowestHighIndex) {
       highestLowIndex = -1;
-      float tempMinY = newRectMinY;
+      int tempMinY = newRectMinY;
       lowestHighIndex = 0;
-      float tempMaxX = n.entriesMaxX[0];
+      int tempMaxX = n.entriesMaxX[0];
 
       for (int i = 1; i < n.entryCount; i++) {
         if (n.entriesMinY[i] < tempMinY) {
@@ -1007,10 +1007,10 @@ public class RTree implements SpatialIndex, Serializable {
             n.mbrMinY != parent.entriesMinY[parentEntry] ||
             n.mbrMaxX != parent.entriesMaxX[parentEntry] ||
             n.mbrMaxY != parent.entriesMaxY[parentEntry]) {
-          float deletedMinX = parent.entriesMinX[parentEntry];
-          float deletedMinY = parent.entriesMinY[parentEntry];
-          float deletedMaxX = parent.entriesMaxX[parentEntry];
-          float deletedMaxY = parent.entriesMaxY[parentEntry];
+          int deletedMinX = parent.entriesMinX[parentEntry];
+          int deletedMinY = parent.entriesMinY[parentEntry];
+          int deletedMaxX = parent.entriesMaxX[parentEntry];
+          int deletedMaxY = parent.entriesMaxY[parentEntry];
           parent.entriesMinX[parentEntry] = n.mbrMinX;
           parent.entriesMinY[parentEntry] = n.mbrMinY;
           parent.entriesMaxX[parentEntry] = n.mbrMaxX;
@@ -1041,7 +1041,7 @@ public class RTree implements SpatialIndex, Serializable {
   /**
    *  Used by add(). Chooses a leaf to add the rectangle to.
    */
-  private Node chooseNode(float minX, float minY, float maxX, float maxY, int level) {
+  private Node chooseNode(int minX, int minY, int maxX, int maxY, int level) {
     // CL1 [Initialize] Set N to be the root node
     Node n = getNode(rootNodeId);
     parents.clear();
@@ -1064,10 +1064,10 @@ public class RTree implements SpatialIndex, Serializable {
                                                      minX, minY, maxX, maxY);
       int index = 0; // index of rectangle in subtree
       for (int i = 1; i < n.entryCount; i++) {
-        float tempMinX = n.entriesMinX[i];
-        float tempMinY = n.entriesMinY[i];
-        float tempMaxX = n.entriesMaxX[i];
-        float tempMaxY = n.entriesMaxY[i];
+        int tempMinX = n.entriesMinX[i];
+        int tempMinY = n.entriesMinY[i];
+        int tempMaxX = n.entriesMaxX[i];
+        int tempMaxY = n.entriesMaxY[i];
         float tempEnlargement = Rectangle.enlargement(tempMinX, tempMinY, tempMaxX, tempMaxY,
                                                       minX, minY, maxX, maxY);
         if ((tempEnlargement < leastEnlargement) ||

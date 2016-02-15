@@ -50,7 +50,7 @@ public class Script {
   static final int REFERENCE_COMPARISON = 1;
   static final int REFERENCE_GENERATE = 2;
   
-  private float canvasSize = 100000F;
+  private int canvasSize = 100000;
 
   private void writeOutput(String outputLine, PrintWriter outputFile, LineNumberReader referenceFile) {
    try {
@@ -70,23 +70,23 @@ public class Script {
     }  
   }
   
-  private float quantize(double d, int quantizer) {
+  private int quantize(double d, int quantizer) {
     if (quantizer <= 0) {
-      return (float) d;
+      return (int)Math.round(d);
     }
     
     d /= quantizer;
-    d = Math.round(d);
-    d *= quantizer;
+    int i = (int)Math.round(d);
+    i *= quantizer;
     
-    return (float) d;
+    return i;
   }
   
-  private Rectangle getRandomRectangle(Random r, float rectangleSize, float canvasSize, int quantizer) {
-    float x1 = quantize(r.nextGaussian() * canvasSize, quantizer);
-    float y1 = quantize(r.nextGaussian() * canvasSize, quantizer);
-    float x2 = x1 + quantize(r.nextGaussian() * rectangleSize, quantizer);
-    float y2 = y1 + quantize(r.nextGaussian() * rectangleSize, quantizer);
+  private Rectangle getRandomRectangle(Random r, int rectangleSize, int canvasSize, int quantizer) {
+    int x1 = quantize(r.nextGaussian() * canvasSize, quantizer);
+    int y1 = quantize(r.nextGaussian() * canvasSize, quantizer);
+    int x2 = x1 + quantize(r.nextGaussian() * rectangleSize, quantizer);
+    int y2 = y1 + quantize(r.nextGaussian() * rectangleSize, quantizer);
     
     return new Rectangle(x1, y1, x2, y2);
   }
@@ -110,8 +110,8 @@ public class Script {
     
     Random random = new Random();
     DecimalFormat df = new DecimalFormat();
-    df.setMinimumFractionDigits(4);
-    df.setMaximumFractionDigits(4);
+    df.setMinimumFractionDigits(0);
+    df.setMaximumFractionDigits(0);
     df.setMinimumIntegerDigits(7);
     df.setMaximumIntegerDigits(7);
     df.setPositivePrefix(" ");
@@ -200,7 +200,7 @@ public class Script {
           } else if (operation.equals("ADDRANDOM")) {
             int count = Integer.parseInt(st.nextToken());
             int startId = Integer.parseInt(st.nextToken());
-            float rectangleSize = Float.parseFloat(st.nextToken());
+            int rectangleSize = Integer.parseInt(st.nextToken());
             
             writeOutput(outputBuffer.toString(), outputFile, referenceFile);
             
@@ -220,7 +220,7 @@ public class Script {
           } else if (operation.equals("DELETERANDOM")) {
             int count = Integer.parseInt(st.nextToken());
             int startId = Integer.parseInt(st.nextToken());
-            float rectangleSize = Float.parseFloat(st.nextToken());
+            int rectangleSize = Integer.parseInt(st.nextToken());
             writeOutput(outputBuffer.toString(), outputFile, referenceFile);
 
             long startTime = System.currentTimeMillis();
@@ -251,8 +251,8 @@ public class Script {
             int totalEntriesReturned = 0;
             
             for (int id = 0; id < queryCount; id++) {
-              float x = (float) random.nextGaussian() * canvasSize;
-              float y = (float) random.nextGaussian() * canvasSize;
+              int x = (int)Math.round(random.nextGaussian() * canvasSize);
+              int y = (int)Math.round(random.nextGaussian() * canvasSize);
               
               List<Integer> l = ld.nearest(new Point(x, y), Float.POSITIVE_INFINITY);
               totalEntriesReturned += l.size();
@@ -282,8 +282,8 @@ public class Script {
             int totalEntriesReturned = 0;
             
             for (int id = 0; id < queryCount; id++) {
-              float x = (float) random.nextGaussian() * canvasSize;
-              float y = (float) random.nextGaussian() * canvasSize;
+              int x = (int)Math.round(random.nextGaussian() * canvasSize);
+              int y = (int)Math.round(random.nextGaussian() * canvasSize);
               
               List<Integer> l = ld.nearestN(new Point(x, y), n, Float.POSITIVE_INFINITY);
               
@@ -307,7 +307,7 @@ public class Script {
             }
           } else if (operation.equals("INTERSECTRANDOM")) {
             int queryCount = Integer.parseInt(st.nextToken());
-            float rectangleSize = Float.parseFloat(st.nextToken());
+            int rectangleSize = Integer.parseInt(st.nextToken());
             
             writeOutput(outputBuffer.toString(), outputFile, referenceFile);
 
@@ -335,7 +335,7 @@ public class Script {
           } 
           else if (operation.equals("CONTAINSRANDOM")) {
             int queryCount = Integer.parseInt(st.nextToken());
-            float rectangleSize = Float.parseFloat(st.nextToken());
+            int rectangleSize = Integer.parseInt(st.nextToken());
             
             writeOutput(outputBuffer.toString(), outputFile, referenceFile);
 
@@ -363,10 +363,10 @@ public class Script {
           } 
           else if (operation.equals("ADD")) {
             int id = Integer.parseInt(st.nextToken());
-            float x1 = Float.parseFloat(st.nextToken());
-            float y1 = Float.parseFloat(st.nextToken());
-            float x2 = Float.parseFloat(st.nextToken());
-            float y2 = Float.parseFloat(st.nextToken());
+            int x1 = Integer.parseInt(st.nextToken());
+            int y1 = Integer.parseInt(st.nextToken());
+            int x2 = Integer.parseInt(st.nextToken());
+            int y2 = Integer.parseInt(st.nextToken());
              
             si.add(new Rectangle(x1, y1, x2, y2), id);
              
@@ -375,10 +375,10 @@ public class Script {
           } 
           else if (operation.equals("DELETE")) {
             int id = Integer.parseInt(st.nextToken());
-            float x1 = Float.parseFloat(st.nextToken());
-            float y1 = Float.parseFloat(st.nextToken());
-            float x2 = Float.parseFloat(st.nextToken());
-            float y2 = Float.parseFloat(st.nextToken());
+            int x1 = Integer.parseInt(st.nextToken());
+            int y1 = Integer.parseInt(st.nextToken());
+            int x2 = Integer.parseInt(st.nextToken());
+            int y2 = Integer.parseInt(st.nextToken());
              
             boolean deleted = si.delete(new Rectangle(x1, y1, x2, y2), id);
              
@@ -390,8 +390,8 @@ public class Script {
             writeOutput(outputBuffer.toString(), outputFile, referenceFile);
           } 
           else if (operation.equals("NEAREST")) {
-            float x = Float.parseFloat(st.nextToken());
-            float y = Float.parseFloat(st.nextToken());
+            int x = Integer.parseInt(st.nextToken());
+            int y = Integer.parseInt(st.nextToken());
              
             List<Integer> l = ld.nearest(new Point(x, y), Float.POSITIVE_INFINITY);
             
@@ -405,10 +405,10 @@ public class Script {
             writeOutput(outputBuffer.toString(), outputFile, referenceFile);
           } 
           else if (operation.equals("INTERSECT")) {
-            float x1 = Float.parseFloat(st.nextToken());
-            float y1 = Float.parseFloat(st.nextToken());
-            float x2 = Float.parseFloat(st.nextToken());
-            float y2 = Float.parseFloat(st.nextToken());
+            int x1 = Integer.parseInt(st.nextToken());
+            int y1 = Integer.parseInt(st.nextToken());
+            int x2 = Integer.parseInt(st.nextToken());
+            int y2 = Integer.parseInt(st.nextToken());
             
             List<Integer> l = ld.intersects(new Rectangle(x1, y1, x2, y2));
             

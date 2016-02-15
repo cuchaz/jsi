@@ -1,4 +1,18 @@
-[![Build Status](https://www.travis-ci.org/aled/jsi.png?branch=master)](https://www.travis-ci.org/aled/jsi)
+
+This is a Fork
+--------------
+
+This fork of JSI is maintained by Jeff Martin and released under the exact same LGPL license.
+
+I really only made one change. I converted all the float types in the geometry classes to integers instead.
+
+That change makes this RTree implementation work on 32-bit integer grids without loss of precision.
+In other words, 2147483647 - 1 doesn't work with floats, but it does with ints.
+
+Last time I checked, it still passes all the unit tests.
+
+Original readme follows below.
+
 
 Overview
 --------

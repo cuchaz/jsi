@@ -49,18 +49,18 @@ public class PerformanceTest {
   private static final Logger log = LoggerFactory.getLogger(PerformanceTest.class);
   private SpatialIndex si;
 
-  private float randomFloat(Random r, float min, float max) {
-    return (r.nextFloat() * (max - min)) + min;
+  private int randomInt(Random r, int min, int max) {
+	  return r.nextInt(max - min) + min;
   }
 
   protected Point randomPoint(Random r) {
-    return new Point(randomFloat(r, 0, 100), randomFloat(r, 0, 100));
+    return new Point(randomInt(r, 0, 100), randomInt(r, 0, 100));
   }
 
-  private Rectangle randomRectangle(Random r, float size) {
-    float x = randomFloat(r, 0, 100);
-    float y = randomFloat(r, 0, 100);
-    return new Rectangle(x, y, x + randomFloat(r, 0, size), y + randomFloat(r, 0, size));
+  private Rectangle randomRectangle(Random r, int size) {
+    int x = randomInt(r, 0, 100);
+    int y = randomInt(r, 0, 100);
+    return new Rectangle(x, y, x + randomInt(r, 0, size), y + randomInt(r, 0, size));
   }
 
   abstract class Operation {
@@ -117,7 +117,7 @@ public class PerformanceTest {
     final int rectangleCount = 1000000;
     final Rectangle[] rects = new Rectangle[rectangleCount];
     for (int i = 0; i < rectangleCount; i++) {
-      rects[i] = randomRectangle(rand, 0.01f);
+      rects[i] = randomRectangle(rand, 1);
     }
 
     long duration;
@@ -149,8 +149,8 @@ public class PerformanceTest {
         exec.submit(new Runnable() {public void run() {benchmark(new Operation("nearest", new Random(0)) {void execute(SpatialIndex si, Random r) {si.nearest(randomPoint(r), countProc, 0.1f);}}, 100); }});
         exec.submit(new Runnable() {public void run() {benchmark(new Operation("nearestNUnsorted", new Random(0)) {void execute(SpatialIndex si, Random r) {si.nearestNUnsorted(randomPoint(r), countProc, 10, 0.16f);}}, 100); }});
         exec.submit(new Runnable() {public void run() {benchmark(new Operation("nearestN", new Random(0)) {void execute(SpatialIndex si, Random r) {si.nearestN(randomPoint(r), countProc, 10, 0.16f);}}, 100); }});
-        exec.submit(new Runnable() {public void run() {benchmark(new Operation("intersects", new Random(0)) {void execute(SpatialIndex si, Random r) {si.intersects(randomRectangle(r, 0.6f), countProc);}}, 100); }});
-        exec.submit(new Runnable() {public void run() {benchmark(new Operation("contains", new Random(0)) {void execute(SpatialIndex si, Random r) {si.contains(randomRectangle(r, 0.65f), countProc);}}, 100); }});
+        exec.submit(new Runnable() {public void run() {benchmark(new Operation("intersects", new Random(0)) {void execute(SpatialIndex si, Random r) {si.intersects(randomRectangle(r, 2), countProc);}}, 100); }});
+        exec.submit(new Runnable() {public void run() {benchmark(new Operation("contains", new Random(0)) {void execute(SpatialIndex si, Random r) {si.contains(randomRectangle(r, 3), countProc);}}, 100); }});
       }
       try { exec.awaitTermination(1, TimeUnit.DAYS); } catch (Exception e) {}
     }

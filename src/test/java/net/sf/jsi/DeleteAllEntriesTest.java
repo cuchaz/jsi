@@ -52,7 +52,7 @@ public class DeleteAllEntriesTest extends TestCase {
     Random r = new Random();
     r.setSeed(0);
     for (int i = 0; i < numRects; i+=1) {
-      rects[i] = new Rectangle(r.nextFloat(), r.nextFloat(), r.nextFloat(), r.nextFloat());
+      rects[i] = new Rectangle(r.nextInt(100), r.nextInt(100), r.nextInt(100), r.nextInt(100));
     }
     
     run(1, 2, numRects);
