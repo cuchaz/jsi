@@ -12,3 +12,5 @@ target
 *.iws
 /.idea/
 
+/bin/
+/build/output/
