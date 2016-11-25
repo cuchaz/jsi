@@ -3,6 +3,7 @@ package net.sf.jsi;
 import org.jerkar.api.depmanagement.JkDependencies;
 import org.jerkar.api.depmanagement.JkModuleId;
 import org.jerkar.api.depmanagement.JkVersion;
+import org.jerkar.api.java.JkJavaCompiler;
 import org.jerkar.tool.builtins.javabuild.JkJavaBuild;
 import org.jerkar.tool.builtins.javabuild.JkJavaPacker;
 
@@ -27,7 +28,7 @@ public class Build extends JkJavaBuild {
 
 	@Override
 	public String javaSourceVersion() {
-		return "1.8";
+		return JkJavaCompiler.V8;
 	}
 	
 	@Override
