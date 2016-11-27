@@ -3,6 +3,7 @@ package net.sf.jsi;
 import org.jerkar.api.depmanagement.JkDependencies;
 import org.jerkar.api.depmanagement.JkModuleId;
 import org.jerkar.api.depmanagement.JkVersion;
+import org.jerkar.api.file.JkFileTreeSet;
 import org.jerkar.api.java.JkJavaCompiler;
 import org.jerkar.tool.builtins.javabuild.JkJavaBuild;
 import org.jerkar.tool.builtins.javabuild.JkJavaPacker;
@@ -50,6 +51,7 @@ public class Build extends JkJavaBuild {
 		return JkJavaPacker.builder(this)
 			.includeVersion(true)
 			.doSources(false)
+			.extraFilesInJar(JkFileTreeSet.of(baseDir().include("readme.md")))
 			.build();
 	}
 }
